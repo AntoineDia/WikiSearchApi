@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'sanchez';
+  src: url("fonts/Sanchez-Regular.ttf");
+}
+html, body{
+  padding: 0;
+  margin: 0;
+  color: #ffffff;
+}
+h1{
+  font-family: sanchez;
+  font-weight: normal;
+  padding: 0;
+  margin: 10px;
+}
+#search{
+  height: 24px;
+  width: 250px;
+  border-radius: 5px;
+  border-style: none;
+  background-color: #e94061;
+  padding-left: 10px;
+  color: #ffffff;
+  outline: 0;
+  font-size: 111%;
+}
+::placeholder{
+  color: #dfdfdf;
+}
+#searchbar{
+  padding: 10px;
+  background-color: crimson;
+  text-align: center;
+}
+#searchbar > span{
+  content: url("https://img.icons8.com/metro/24/FFFFFF/search.png");
+  padding-left: 10px;
+  cursor: pointer;
+  position: absolute;
+}
