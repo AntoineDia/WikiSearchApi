@@ -19,9 +19,17 @@ h2{
   font-family: sanchez;
   padding-bottom: 0;
   margin-bottom: 0;
+  width: 900px;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 p{
   font-family: sans-serif;
+  width: 850px;
+  max-width: 95%;
+  margin-left: auto;
+  margin-right: auto;
 }
 #search{
   height: 24px;
@@ -49,7 +57,6 @@ p{
   cursor: pointer;
   position: absolute;
 }
-
 .resultat{
   width: 1000px;
   max-width: 92%;
@@ -59,12 +66,15 @@ p{
   border-radius: 15px;
   cursor: pointer;
 }
-
+.nopoint{
+  cursor: auto;
+}
 .youpush{
   padding-bottom: 26px;
 }
 
 .youstick{
+  z-index: 1;
   position: fixed;
   width: 102%;
   top:0;
@@ -108,5 +118,32 @@ width: 100%;
 @keyframes hideifr{
   0%{
     height: 500px;
+  }
+}
+.colapse{
+  animation: hideEl .5s;
+  transform: scale(1,0);
+  opacity: 0;
+  height: 0;
+  margin-block-end: 8px;
+  margin-block-end: 8px;
+}
+@keyframes hideEl{
+  0%{
+    opacity: 1;
+    transform: scale(1,1);
+  }
+}
+.expand{
+  animation: showEl .5s;
+  transform: scale(1,1);
+  opacity: 1;
+  margin-block-end: 16px;
+  margin-block-end: 16px;
+}
+@keyframes showEl{
+  0%{
+    opacity: 0;
+    transform: scale(1,0);
   }
 }
