@@ -1,85 +1,130 @@
-//TOINTOIN DIAMBU
+// TOINTOIN DIAMBU
 
-//  Juste rendre le logo cliqable
-document.querySelector('#searchbar > h1').addEventListener('click', function(){location.reload()});
+// index variables
+d = document;
+w = window;
 
-// {Position: sticky} pour les nuls (genre moi)
-window.addEventListener('scroll', dessente);
-function dessente(){
-  if (window.scrollY > 110){
-    document.querySelector('#searchbar > h1').setAttribute('class','youpush');
-    document.querySelector('#stick').setAttribute('class','youstick');
-    window.addEventListener('scroll', montee);
-    window.removeEventListener('scroll', dessente);
+//  Juste rendre le logo cliquable
+d.querySelector('#searchbar > h1').addEventListener('click', retour => location.reload());
+
+w.addEventListener('scroll', descente);
+
+function descente() {
+  if (w.scrollY > 110){
+    d.querySelector('#searchbar > h1').setAttribute('class','youpush');
+    d.querySelector('#stick').setAttribute('class','youstick');
+    w.addEventListener('scroll', montee);
+    w.removeEventListener('scroll', descente);
   }
 };
-function montee(){
-  if (window.scrollY < 70){
-    document.querySelector('#searchbar > h1').removeAttribute('class');
-    document.querySelector('#stick').removeAttribute('class');
-    window.addEventListener('scroll',dessente);
-    window.removeEventListener('scroll', montee);
+function montee() {
+  if (w.scrollY < 70){
+    d.querySelector('#searchbar > h1').removeAttribute('class');
+    d.querySelector('#stick').removeAttribute('class');
+    w.addEventListener('scroll',descente);
+    w.removeEventListener('scroll', montee);
   }
 };
-
-//Ajoute l'événement de recherche
-document.querySelector('#stick > span').addEventListener('click', getsearch);
-document.getElementById('search').addEventListener('keydown', isEnter);
-function isEnter(key){
+d.querySelector('#stick > span').addEventListener('click', getsearch);
+d.getElementById('search').addEventListener('keydown', isEnter);
+function isEnter(key) {
   if (key.keyCode === 13) {
     getsearch();
-   }
+  }
 }
 
-//  Récupère les données
+
+d.getElementById('search').addEventListener('input',getautocompl);
+//autocompletion
+function getautocompl(key){
+  mot = d.getElementById('search').value;
+  if (mot != ""){
+    var url =
+    'https://en.wikipedia.org/w/api.php?origin=*&action=opensearch&limit=5&search=';
+    url += d.getElementById('search').value;
+    fetch(url)
+    .then(function(reponse){
+      return reponse.json();
+    })
+    .then(function(words){
+      d.querySelector('#stick').removeChild(d.querySelector('#stick > ul'));
+      d.querySelector('#stick').appendChild(d.createElement('ul'));
+      d.addEventListener('click', function(){
+        d.querySelector('#stick').removeChild(d.querySelector('#stick > ul'));
+        d.querySelector('#stick').appendChild(d.createElement('ul'));
+      })
+      words[1].forEach(word =>{
+        let li = d.createElement('li');
+        li.setAttribute('class','autocomplete');
+        li.innerText = word;
+        d.querySelector('#stick > ul').appendChild(li);
+        li.addEventListener('click', function(leclic){
+          d.getElementById('search').value = leclic.path[0].innerText;
+          getsearch();
+        })
+      });
+    });
+  } else {
+    d.querySelector('#stick').removeChild(d.querySelector('#stick > ul'));
+    d.querySelector('#stick').appendChild(d.createElement('ul'));
+  }
+}
+
+// Récupère les données depuis wikipedia
 function getsearch(){
-  if(document.getElementById('search').value != ""){
-    document.querySelector('main').removeChild(document.querySelector('#resultats'));
-    document.querySelector('main').innerHTML += '<div id="resultats"></div>';
-    var url = 'https://en.wikipedia.org/w/api.php?origin=*&action=opensearch&limit=20&search=';
-    url += document.getElementById('search').value;
+  if(!d.getElementById('search').value != ""){
+    location.reload();
+  } else {
+    d.querySelector('#stick').removeChild(d.querySelector('#stick > ul'));
+    d.querySelector('#stick').appendChild(d.createElement('ul'));
+    d.querySelector('main').removeChild(d.querySelector('#resultats'));
+    d.querySelector('main').innerHTML += '<div id="resultats"></div>';
+    var url =
+    'https://en.wikipedia.org/w/api.php?origin=*&action=opensearch&limit=20&search=';
+    url += d.getElementById('search').value;
     fetch(url).then(function(reponse){
       return reponse.json();
     }).then(function(data) {
       incorpHtml(data);
     });
-  } else {
-    location.reload();
   }
 };
 
 //Affiche les données dans l'html
+function mC(theparent,thechilds){
+  thechilds.forEach(child => {
+    theparent.appendChild(child);
+  });
+}
 function incorpHtml(el){
-  var r = document.querySelector('#resultats');
+  var r = d.querySelector('#resultats');
   if(el[1].length == 0){
     el[1].push('Nothing here :(');
-    el[2].push('Search something that exist<br>THIS IS A 404!! ABORT!!');
+    el[2].push('Search something that exist. THIS IS A 404!! ABORT!!');
     el[3].push('');
   };
   for(i = 0; i < el[1].length; i++){
-    let div = document.createElement('div');
+    let div = d.createElement('div');
     div.setAttribute('class','resultat');
     div.setAttribute('url',el[3][i]);
-    let h2 = document.createElement('h2');
+    let h2 = d.createElement('h2');
     h2.innerText = el[1][i];
-    let p = document.createElement('p');
+    let p = d.createElement('p');
     p.innerText = el[2][i];
-    let iframe = document.createElement('iframe');
+    let iframe = d.createElement('iframe');
     iframe.setAttribute('class','myiframe');
-    div.appendChild(h2);
-    div.appendChild(p);
-    div.appendChild(iframe);
+    mC(div,[h2,p,iframe]);
     r.appendChild(div);
     div.addEventListener('click',hellowiki);
   };
 };
 //afiche l'iframe
-function hellowiki(divbrut){
+function hellowiki(mouseevent){
   var div = '';
-  if(divbrut.path.length<8){
-    div = divbrut.path[0];
+  if(mouseevent.path.length<8){
+    div = mouseevent.path[0];
   } else {
-    div = divbrut.path[1];
+    div = mouseevent.path[1];
   }
   p = div.getElementsByTagName('p')[0];
   p.setAttribute('class','colapse');
@@ -88,8 +133,8 @@ function hellowiki(divbrut){
   ifr.setAttribute('src',div.getAttribute('url'));
   div.removeEventListener('click',hellowiki);
   div.addEventListener('click', byewiki);
-  if(document.getElementById('needcol')){
-    el = document.getElementById('needcol');
+  if(d.getElementById('needcol')){
+    el = d.getElementById('needcol');
     el.removeAttribute('id');
     byewiki(el);
   }
